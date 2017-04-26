@@ -10,6 +10,8 @@ const babelOptions = {
 
 
 let input = `
+    import z from "some-path/y.js";
+
     let a;
 
     (function () {

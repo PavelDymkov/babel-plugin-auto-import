@@ -37,7 +37,7 @@ export default function({types: t}) {
 
 
     function isCorrectIdentifier({parentPath}) {
-        return parentPath.isExpression();
+        return !parentPath.isDeclaration() && !parentPath.findParent(isImportDeclaration);
     }
 
     function isDefined(identifier, {bindings, parent}) {
@@ -56,25 +56,90 @@ export default function({types: t}) {
     }
 
     function insertImport(path, identifier, type, source) {
-        let specifier;
+        let programBody = path.findParent(isProgram).get("body");
 
-        if (type == ImportType.DEFAULT) {
-            specifier = t.importDefaultSpecifier(identifier);
+        let currentImportDeclarations = programBody.reduce(toImportDeclaration, []);
+
+        let importDidAppend = false;
+
+        if (currentImportDeclarations.length != 0) {
+            importDidAppend =
+                currentImportDeclarations.some(addToCurrentImportDeclarations, {identifier, type, source});
         }
 
-        if (type == ImportType.IMPORT) {
-            specifier = t.importSpecifier(identifier, identifier);
+        if (!importDidAppend) {
+            let specifier;
+
+            if (type == ImportType.DEFAULT) {
+                specifier = t.importDefaultSpecifier(identifier);
+            }
+
+            if (type == ImportType.IMPORT) {
+                specifier = t.importSpecifier(identifier, identifier);
+            }
+
+            let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(source));
+            let [firstProgramPath] = programBody;
+
+            firstProgramPath.insertBefore(importDeclaration);
         }
-
-        let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(source));
-
-        let programPath = path.findParent(isProgram);
-        let [firstProgramPath] = programPath.get("body");
-
-        firstProgramPath.insertBefore(importDeclaration);
     }
 
     function isProgram(path) {
         return path.isProgram();
+    }
+
+    function isImportDeclaration(path) {
+        return path.isImportDeclaration();
+    }
+
+    function toImportDeclaration(list, currentPath) {
+        if (currentPath.isImportDeclaration())
+            list.push(currentPath);
+
+        return list;
+    }
+
+    function addToCurrentImportDeclarations(importDeclarationPath) {
+        let {identifier, type, source} = this;
+        let {node} = importDeclarationPath;
+
+        if (node.source.value != source)
+            return false;
+
+        let {specifiers} = node;
+
+        if (type == ImportType.DEFAULT) {
+            if (!specifiers.some(hasImportDefaultSpecifier)) {
+                let specifier = t.importDefaultSpecifier(identifier);
+
+                specifiers.unshift(specifier);
+
+                importDeclarationPath.replaceWith(node);
+            }
+        }
+
+        if (type == ImportType.IMPORT) {
+            if (!specifiers.some(hasSpecifierWithName, identifier)) {
+                let specifier = t.importSpecifier(identifier, identifier);
+
+                specifiers.push(specifier);
+
+                importDeclarationPath.replaceWith(node);
+            }
+        }
+    }
+
+    function hasImportDefaultSpecifier(path) {
+        return path.isImportDefaultSpecifier();
+    }
+
+    function hasSpecifierWithName(node) {
+        if (!t.isImportSpecifier(node))
+            return false;
+
+        let {name} = this;
+
+        return node.imported.name == name;
     }
 }
