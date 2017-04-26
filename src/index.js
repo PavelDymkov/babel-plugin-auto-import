@@ -30,7 +30,6 @@ export default function({types: t}) {
                         insertImport(path, identifier, ImportType.IMPORT, declaration.path);
                     }
                 }
-                debugger
             }
         }
     };
@@ -116,6 +115,8 @@ export default function({types: t}) {
                 specifiers.unshift(specifier);
 
                 importDeclarationPath.replaceWith(node);
+
+                return true;
             }
         }
 
@@ -126,8 +127,12 @@ export default function({types: t}) {
                 specifiers.push(specifier);
 
                 importDeclarationPath.replaceWith(node);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     function hasImportDefaultSpecifier(path) {
