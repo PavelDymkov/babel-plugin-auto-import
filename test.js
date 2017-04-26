@@ -1,15 +1,27 @@
 const babel = require("babel-core");
+const declarations = [
+    { default: "x", path: "some-path/x.js" },
+    { imports: ["y"], path: "some-path/y.js" }
+];
 const babelOptions = {
-    plugins: [["auto-import"]],
+    plugins: [["auto-import", {declarations}]],
     //presets: ["es2015"]
 };
 
 
 let input = `
+    let a;
+
     (function () {
-        let x = test();
-      
-        return x + y;
+        let b;
+        
+        (function () {
+            let c = a;
+            let d = x();
+            let e = a;
+            let f = y;
+            let g;
+        })();
     })();
 `;
 
