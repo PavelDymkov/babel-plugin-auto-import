@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rimraf lib && babel src --out-dir lib",
     "dev": "rimraf lib && babel src --out-dir lib --source-maps --watch",
-    "prepublish": "rimraf lib && npm run build",
+    "prepublish": "npm run build",
     "test": "npm run build && mocha"
   },
   "repository": {
