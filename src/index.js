@@ -8,6 +8,7 @@ export default function({types: t}) {
     return {
         visitor: {
             Identifier(path, {opts: options}) {
+                debugger
                 if (!isCorrectIdentifier(path))
                     return;
 
@@ -55,7 +56,8 @@ export default function({types: t}) {
     }
 
     function insertImport(path, identifier, type, source) {
-        let programBody = path.findParent(isProgram).get("body");
+        let program = path.findParent(isProgram);
+        let programBody = program.get("body");
 
         let currentImportDeclarations = programBody.reduce(toImportDeclaration, []);
 
@@ -78,9 +80,8 @@ export default function({types: t}) {
             }
 
             let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(source));
-            let [firstProgramPath] = programBody;
 
-            firstProgramPath.insertBefore(importDeclaration);
+            program.unshiftContainer("body", importDeclaration);
         }
     }
 
