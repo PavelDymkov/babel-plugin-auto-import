@@ -20,6 +20,11 @@ export default function({types: t}) {
 
                 let {declarations} = options;
 
+                if (!isArray(declarations))
+                    return;
+
+                declarations.forEach(insertImport, { path, identifier });
+                return
                 for (let key in declarations) if (declarations.hasOwnProperty(key)) {
                     let declaration = declarations[key];
 
@@ -55,17 +60,21 @@ export default function({types: t}) {
         return identifier == name;
     }
 
-    function hasDefault(identifier, declaration) {
-        return declaration["default"] == identifier.name;
-    }
+    function insertImport(declaration) {
+        let { path, identifier } = this;
 
-    function hasMember(identifier, declaration) {
-        let members = isArray(declaration.members) ? declaration.members : [];
+        let type = null;
 
-        return members.some(has, identifier);
-    }
+        if (hasDefault(declaration, identifier))
+            type = ImportType.DEFAULT;
+        else
+        if (hasMember(declaration, identifier))
+            type = ImportType.MEMBER;
 
-    function insertImport(path, identifier, type, moduleSource) {
+        if (!type) return;
+
+        let { path: moduleSource } = declaration;
+
         let program = path.findParent(isProgram);
         let programBody = program.get("body");
 
@@ -77,18 +86,26 @@ export default function({types: t}) {
         if (!importDidAppend) {
             let specifier;
 
-            if (type == ImportType.DEFAULT) {
+            if (type == ImportType.DEFAULT)
                 specifier = t.importDefaultSpecifier(identifier);
-            }
-
-            if (type == ImportType.MEMBER) {
+            else
+            if (type == ImportType.MEMBER)
                 specifier = t.importSpecifier(identifier, identifier);
-            }
 
             let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(moduleSource));
 
             program.unshiftContainer("body", importDeclaration);
         }
+    }
+
+    function hasDefault(declaration, identifier) {
+        return declaration["default"] == identifier.name;
+    }
+
+    function hasMember(declaration, identifier) {
+        let members = isArray(declaration.members) ? declaration.members : [];
+
+        return members.some(has, identifier);
     }
 
     function isProgram(path) {
