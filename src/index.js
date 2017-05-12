@@ -66,14 +66,14 @@ export default function({types: t}) {
         return members.some(has, identifier);
     }
 
-    function insertImport(path, identifier, type, source) {
+    function insertImport(path, identifier, type, moduleSource) {
         let program = path.findParent(isProgram);
         let programBody = program.get("body");
 
         let currentImportDeclarations = programBody.reduce(toImportDeclaration, []);
 
         let importDidAppend =
-            currentImportDeclarations.some(addToImportDeclaration, {identifier, type, source});
+            currentImportDeclarations.some(addToImportDeclaration, {identifier, type, moduleSource});
 
         if (!importDidAppend) {
             let specifier;
@@ -86,7 +86,7 @@ export default function({types: t}) {
                 specifier = t.importSpecifier(identifier, identifier);
             }
 
-            let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(source));
+            let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(moduleSource));
 
             program.unshiftContainer("body", importDeclaration);
         }
@@ -108,10 +108,10 @@ export default function({types: t}) {
     }
 
     function addToImportDeclaration(importDeclarationPath) {
-        let {identifier, type, source} = this;
+        let {identifier, type, moduleSource} = this;
         let {node} = importDeclarationPath;
 
-        if (node.source.value != source)
+        if (node.source.value != moduleSource)
             return false;
 
         let {specifiers} = node;
