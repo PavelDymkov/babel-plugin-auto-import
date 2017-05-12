@@ -24,18 +24,6 @@ export default function({types: t}) {
                     return;
 
                 declarations.forEach(insertImport, { path, identifier });
-                return
-                for (let key in declarations) if (declarations.hasOwnProperty(key)) {
-                    let declaration = declarations[key];
-
-                    if (hasDefault(identifier, declaration)) {
-                        insertImport(path, identifier, ImportType.DEFAULT, declaration.path);
-                    }
-                    else
-                    if (hasMember(identifier, declaration)) {
-                        insertImport(path, identifier, ImportType.MEMBER, declaration.path);
-                    }
-                }
             }
         }
     };
