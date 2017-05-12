@@ -56,7 +56,7 @@ describe("Tests", () => {
             someVariable;
         `;
         let declaration = {
-            imports: ["someVariable"], path: "some-path/some-module.js"
+            members: ["someVariable"], path: "some-path/some-module.js"
         };
         let output = `
             import {someVariable} from "some-path/some-module.js";
@@ -87,7 +87,7 @@ describe("Tests", () => {
         `;
         let declarations = [
             { default: "x", path: "some-path/x.js" },
-            { imports: ["y"], path: "some-path/y.js" }
+            { members: ["y"], path: "some-path/y.js" }
         ];
         let output = `
             import x from "some-path/x.js";

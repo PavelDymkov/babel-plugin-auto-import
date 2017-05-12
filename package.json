@@ -30,6 +30,7 @@
     "rimraf": "^2.6.1"
   },
   "dependencies": {
-    "babel-core": "^6.24.1"
+    "babel-core": "^6.24.1",
+    "is-array": "^1.0.1"
   }
 }

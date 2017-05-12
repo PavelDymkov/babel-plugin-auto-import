@@ -1,14 +1,15 @@
+const isArray = require("is-array");
+
+
 const ImportType = {
     DEFAULT: 1,
-    IMPORT: 2
+    MEMBER: 2
 };
-
 
 export default function({types: t}) {
     return {
         visitor: {
             Identifier(path, {opts: options}) {
-                debugger
                 if (!isCorrectIdentifier(path))
                     return;
 
@@ -17,18 +18,18 @@ export default function({types: t}) {
                 if (isDefined(identifier, scope))
                     return;
 
-                let {name: identifierName} = identifier;
+                // let {name: identifierName} = identifier;
                 let {declarations} = options;
 
                 for (let key in declarations) if (declarations.hasOwnProperty(key)) {
                     let declaration = declarations[key];
 
-                    if ("default" in declaration && declaration["default"] == identifierName) {
+                    if (hasDefault(identifier, declaration)) {
                         insertImport(path, identifier, ImportType.DEFAULT, declaration.path);
                     }
                     else
-                    if ((declaration["imports"] || []).some(has, identifier)) {
-                        insertImport(path, identifier, ImportType.IMPORT, declaration.path);
+                    if (hasMember(identifier, declaration)) {
+                        insertImport(path, identifier, ImportType.MEMBER, declaration.path);
                     }
                 }
             }
@@ -55,18 +56,24 @@ export default function({types: t}) {
         return identifier == name;
     }
 
+    function hasDefault(identifier, declaration) {
+        return declaration["default"] == identifier.name;
+    }
+
+    function hasMember(identifier, declaration) {
+        let members = isArray(declaration.members) ? declaration.members : [];
+
+        return members.some(has, identifier);
+    }
+
     function insertImport(path, identifier, type, source) {
         let program = path.findParent(isProgram);
         let programBody = program.get("body");
 
         let currentImportDeclarations = programBody.reduce(toImportDeclaration, []);
 
-        let importDidAppend = false;
-
-        if (currentImportDeclarations.length != 0) {
-            importDidAppend =
-                currentImportDeclarations.some(addToCurrentImportDeclarations, {identifier, type, source});
-        }
+        let importDidAppend =
+            currentImportDeclarations.some(addToImportDeclaration, {identifier, type, source});
 
         if (!importDidAppend) {
             let specifier;
@@ -75,7 +82,7 @@ export default function({types: t}) {
                 specifier = t.importDefaultSpecifier(identifier);
             }
 
-            if (type == ImportType.IMPORT) {
+            if (type == ImportType.MEMBER) {
                 specifier = t.importSpecifier(identifier, identifier);
             }
 
@@ -100,7 +107,7 @@ export default function({types: t}) {
         return list;
     }
 
-    function addToCurrentImportDeclarations(importDeclarationPath) {
+    function addToImportDeclaration(importDeclarationPath) {
         let {identifier, type, source} = this;
         let {node} = importDeclarationPath;
 
@@ -121,7 +128,7 @@ export default function({types: t}) {
             }
         }
 
-        if (type == ImportType.IMPORT) {
+        if (type == ImportType.MEMBER) {
             if (!specifiers.some(hasSpecifierWithName, identifier)) {
                 let specifier = t.importSpecifier(identifier, identifier);
 
