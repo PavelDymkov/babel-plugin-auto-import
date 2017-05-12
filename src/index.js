@@ -18,7 +18,6 @@ export default function({types: t}) {
                 if (isDefined(identifier, scope))
                     return;
 
-                // let {name: identifierName} = identifier;
                 let {declarations} = options;
 
                 for (let key in declarations) if (declarations.hasOwnProperty(key)) {
