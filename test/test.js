@@ -125,4 +125,48 @@ describe("Tests", () => {
 
         assert.isTrue(isEquil(input, output, [declaration]));
     });
+
+    it("should assert complex test", () => {
+        let input = `
+            import { q } from "some-path";
+
+            let a;
+
+            (function () {
+                let b;
+
+                (function () {
+                    let c = a;
+                    let d = x();
+                    let e = a;
+                    let f = y;
+                    let g = z;
+                })();
+            })();
+        `;
+        let declaration = {
+            path: "some-path",
+            default: "x",
+            members: ["y", "z"]
+        };
+        let output = `
+            import x, { q, y, z } from "some-path";
+
+            let a;
+
+            (function () {
+                let b;
+
+                (function () {
+                    let c = a;
+                    let d = x();
+                    let e = a;
+                    let f = y;
+                    let g = z;
+                })();
+            })();
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
 });

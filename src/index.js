@@ -23,7 +23,7 @@ export default function({types: t}) {
                 if (!isArray(declarations))
                     return;
 
-                declarations.forEach(insertImport, { path, identifier });
+                declarations.some(handleDeclaration, { path, identifier });
             }
         }
     };
@@ -48,21 +48,35 @@ export default function({types: t}) {
         return identifier == name;
     }
 
-    function insertImport(declaration) {
+    function handleDeclaration(declaration) {
         let { path, identifier } = this;
 
-        let type = null;
+        if (!declaration) return;
 
-        if (hasDefault(declaration, identifier))
-            type = ImportType.DEFAULT;
+        if (hasDefault(identifier, declaration)) {
+            insertImport(path, identifier, ImportType.DEFAULT, declaration.path);
+
+            return true;
+        }
         else
-        if (hasMember(declaration, identifier))
-            type = ImportType.MEMBER;
+        if (hasMember(identifier, declaration)) {
+            insertImport(path, identifier, ImportType.MEMBER, declaration.path);
 
-        if (!type) return;
+            return true;
+        }
+    }
 
-        let { path: moduleSource } = declaration;
+    function hasDefault(identifier, declaration) {
+        return declaration["default"] == identifier.name;
+    }
 
+    function hasMember(identifier, declaration) {
+        let members = isArray(declaration.members) ? declaration.members : [];
+
+        return members.some(has, identifier);
+    }
+
+    function insertImport(path, identifier, type, moduleSource) {
         let program = path.findParent(isProgram);
         let programBody = program.get("body");
 
@@ -74,26 +88,18 @@ export default function({types: t}) {
         if (!importDidAppend) {
             let specifier;
 
-            if (type == ImportType.DEFAULT)
+            if (type == ImportType.DEFAULT) {
                 specifier = t.importDefaultSpecifier(identifier);
-            else
-            if (type == ImportType.MEMBER)
+            }
+
+            if (type == ImportType.MEMBER) {
                 specifier = t.importSpecifier(identifier, identifier);
+            }
 
             let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(moduleSource));
 
             program.unshiftContainer("body", importDeclaration);
         }
-    }
-
-    function hasDefault(declaration, identifier) {
-        return declaration["default"] == identifier.name;
-    }
-
-    function hasMember(declaration, identifier) {
-        let members = isArray(declaration.members) ? declaration.members : [];
-
-        return members.some(has, identifier);
     }
 
     function isProgram(path) {
@@ -147,8 +153,8 @@ export default function({types: t}) {
         return false;
     }
 
-    function hasImportDefaultSpecifier(path) {
-        return path.isImportDefaultSpecifier();
+    function hasImportDefaultSpecifier(node) {
+        return t.isImportDefaultSpecifier(node);
     }
 
     function hasSpecifierWithName(node) {

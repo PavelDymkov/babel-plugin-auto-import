@@ -1,8 +1,10 @@
 const babel = require("babel-core");
 const declarations = [
-    { default: "x", path: "some-path/x.js" },
-    { imports: ["y"], path: "some-path/y.js" },
-    { default: "someVariable", path: "some-path/some-module.js" }
+    {
+        path: "some-path",
+        default: "x",
+        members: ["y", "z"]
+    }
 ];
 const babelOptions = {
     plugins: [["auto-import", {declarations}]],
@@ -12,7 +14,7 @@ const babelOptions = {
 
 let input;
 input = `
-    import z from "some-path/y.js";
+    import { q } from "some-path";
 
     let a;
 
@@ -24,12 +26,9 @@ input = `
             let d = x();
             let e = a;
             let f = y;
-            let g;
+            let g = z;
         })();
     })();
-`;
-input = `
-    someVariable
 `;
 
 
