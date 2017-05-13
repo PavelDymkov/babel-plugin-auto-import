@@ -51,16 +51,23 @@ export default function({types: t}) {
     function handleDeclaration(declaration) {
         let { path, identifier } = this;
 
-        if (!declaration) return;
+        if (!declaration)
+            return;
+
+        let importType = null;
 
         if (hasDefault(declaration, identifier)) {
-            insertImport(path, identifier, ImportType.DEFAULT, declaration.path);
-
-            return true;
+            importType = ImportType.DEFAULT;
         }
         else
         if (hasMember(declaration, identifier)) {
-            insertImport(path, identifier, ImportType.MEMBER, declaration.path);
+            importType = ImportType.MEMBER;
+        }
+
+        if (importType) {
+            let program = path.findParent(isProgram);
+
+            insertImport(program, identifier, importType, declaration.path);
 
             return true;
         }
@@ -76,8 +83,7 @@ export default function({types: t}) {
         return members.some(has, identifier);
     }
 
-    function insertImport(path, identifier, type, moduleSource) {
-        let program = path.findParent(isProgram);
+    function insertImport(program, identifier, type, moduleSource) {
         let programBody = program.get("body");
 
         let currentImportDeclarations = programBody.reduce(toImportDeclarations, []);
