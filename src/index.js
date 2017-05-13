@@ -130,9 +130,7 @@ export default function({types: t}) {
             if (!specifiers.some(hasImportDefaultSpecifier)) {
                 let specifier = t.importDefaultSpecifier(identifier);
 
-                specifiers.unshift(specifier);
-
-                importDeclarationPath.replaceWith(node);
+                importDeclarationPath.unshiftContainer("specifiers", specifier);
 
                 return true;
             }
@@ -142,9 +140,7 @@ export default function({types: t}) {
             if (!specifiers.some(hasSpecifierWithName, identifier)) {
                 let specifier = t.importSpecifier(identifier, identifier);
 
-                specifiers.push(specifier);
-
-                importDeclarationPath.replaceWith(node);
+                importDeclarationPath.pushContainer("specifiers", specifier);
 
                 return true;
             }
