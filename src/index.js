@@ -53,24 +53,24 @@ export default function({types: t}) {
 
         if (!declaration) return;
 
-        if (hasDefault(identifier, declaration)) {
+        if (hasDefault(declaration, identifier)) {
             insertImport(path, identifier, ImportType.DEFAULT, declaration.path);
 
             return true;
         }
         else
-        if (hasMember(identifier, declaration)) {
+        if (hasMember(declaration, identifier)) {
             insertImport(path, identifier, ImportType.MEMBER, declaration.path);
 
             return true;
         }
     }
 
-    function hasDefault(identifier, declaration) {
+    function hasDefault(declaration, identifier) {
         return declaration["default"] == identifier.name;
     }
 
-    function hasMember(identifier, declaration) {
+    function hasMember(declaration, identifier) {
         let members = isArray(declaration.members) ? declaration.members : [];
 
         return members.some(has, identifier);
@@ -80,7 +80,7 @@ export default function({types: t}) {
         let program = path.findParent(isProgram);
         let programBody = program.get("body");
 
-        let currentImportDeclarations = programBody.reduce(toImportDeclaration, []);
+        let currentImportDeclarations = programBody.reduce(toImportDeclarations, []);
 
         let importDidAppend =
             currentImportDeclarations.some(addToImportDeclaration, {identifier, type, moduleSource});
@@ -91,7 +91,7 @@ export default function({types: t}) {
             if (type == ImportType.DEFAULT) {
                 specifier = t.importDefaultSpecifier(identifier);
             }
-
+            else
             if (type == ImportType.MEMBER) {
                 specifier = t.importSpecifier(identifier, identifier);
             }
@@ -110,7 +110,7 @@ export default function({types: t}) {
         return path.isImportDeclaration();
     }
 
-    function toImportDeclaration(list, currentPath) {
+    function toImportDeclarations(list, currentPath) {
         if (currentPath.isImportDeclaration())
             list.push(currentPath);
 
@@ -149,8 +149,6 @@ export default function({types: t}) {
                 return true;
             }
         }
-
-        return false;
     }
 
     function hasImportDefaultSpecifier(node) {
