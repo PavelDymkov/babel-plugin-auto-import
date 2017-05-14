@@ -169,4 +169,20 @@ describe("Tests", () => {
 
         assert.isTrue(isEquil(input, output, [declaration]));
     });
+
+    it("should not add property identifiers", () => {
+        let input = `
+            x.y.z;
+        `;
+        let declaration = {
+            members: ["x", "y", "z"], path: "some-path"
+        };
+        let output = `
+            import { x } from "some-path";
+
+            x.y.z;
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
 });
