@@ -1,10 +1,7 @@
 const babel = require("babel-core");
 const declarations = [
-    {
-        path: "some-path",
-        default: "x",
-        members: ["y", "z"]
-    }
+    { default: "x", path: "some-path" },
+    { members: ["y", "z"], path: "some-path" }
 ];
 const babelOptions = {
     plugins: [["auto-import", {declarations}]],
@@ -14,22 +11,14 @@ const babelOptions = {
 
 let input;
 input = `
-    import { q } from "some-path";
-
-    let a;
-
-    (function () {
-        let b;
-        
-        (function () {
-            let c = a;
-            let d = x();
-            let e = a;
-            let f = y;
-            let g = z;
-        })();
-    })();
+    export default x;
 `;
 
 
 console.log( babel.transform(input, babelOptions).code );
+
+/*
+* assignmentPattern
+* exportDefaultSpecifier, exportNamespaceSpecifier, exportSpecifier
+* objectPattern
+* */

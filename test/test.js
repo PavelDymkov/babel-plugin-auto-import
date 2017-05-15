@@ -17,7 +17,7 @@ function isEquil(input, expected, declarations) {
 
 
 describe("Tests", () => {
-    it("should import default", () => {
+    it("case 1", () => {
         let input = `
             someVariable;
         `;
@@ -33,7 +33,7 @@ describe("Tests", () => {
         assert.isTrue(isEquil(input, output, [declaration]));
     });
 
-    it("should not import default", () => {
+    it("case 2", () => {
         let input = `
             import someVariable from "some-path/some-module.js";
             
@@ -51,7 +51,7 @@ describe("Tests", () => {
         assert.isTrue(isEquil(input, output, [declaration]));
     });
 
-    it("should add import", () => {
+    it("case 3", () => {
         let input = `
             someVariable;
         `;
@@ -59,7 +59,7 @@ describe("Tests", () => {
             members: ["someVariable"], path: "some-path/some-module.js"
         };
         let output = `
-            import {someVariable} from "some-path/some-module.js";
+            import { someVariable } from "some-path/some-module.js";
 
             someVariable;
         `;
@@ -67,7 +67,7 @@ describe("Tests", () => {
         assert.isTrue(isEquil(input, output, [declaration]));
     });
 
-    it("should import x and y", () => {
+    it("case 4", () => {
         let input = `
             import z from "some-path/y.js";
 
@@ -112,7 +112,7 @@ describe("Tests", () => {
         assert.isTrue(isEquil(input, output, declarations));
     });
 
-    it("should not add import", () => {
+    it("case 5", () => {
         let input = `
             let someVariable;
         `;
@@ -126,7 +126,7 @@ describe("Tests", () => {
         assert.isTrue(isEquil(input, output, [declaration]));
     });
 
-    it("should assert complex test", () => {
+    it("case 6", () => {
         let input = `
             import { q } from "some-path";
 
@@ -170,7 +170,7 @@ describe("Tests", () => {
         assert.isTrue(isEquil(input, output, [declaration]));
     });
 
-    it("should not add property identifiers", () => {
+    it("case 7", () => {
         let input = `
             x.y.z;
         `;
@@ -181,6 +181,109 @@ describe("Tests", () => {
             import { x } from "some-path";
 
             x.y.z;
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 8", () => {
+        let input = `
+            let a = x.b();
+            let c = d.b();
+        `;
+        let declaration = {
+            default: ["x"], path: "some-path"
+        };
+        let output = `
+            import x from "some-path";
+            
+            let a = x.b();
+            let c = d.b();
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 9", () => {
+        let input = `
+            x:
+            for (let i = 0; i < 10; i++) {
+                if (i) break x;
+            
+                y:
+                for (let i = 0; i < 10; i++) {
+                    if (i) continue y;
+                }
+            }
+        `;
+        let declaration = {
+            members: ["x", "y"], path: "some-path"
+        };
+        let output = input;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 10", () => {
+        let input = `
+            try {
+                class x {
+                    y() {}
+                }
+                
+                a = class z {};
+            } catch (q) {}
+        `;
+        let declaration = {
+            members: ["x", "y", "z", "q"], path: "some-path"
+        };
+        let output = input;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 11", () => {
+        let input = `
+            function x() { }
+            
+            let a = function y() {};
+            let b = {
+                c: function z() {}
+            };
+        `;
+        let declaration = {
+            members: ["x", "y", "z"], path: "some-path"
+        };
+        let output = input;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 12", () => {
+        let input = `
+            ({ x } = a);
+            
+            [y] = b;
+        `;
+        let declaration = {
+            members: ["x", "y", "z"], path: "some-path"
+        };
+        let output = input;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 13", () => {
+        let input = `
+            export default x;
+        `;
+        let declaration = {
+            default: ["x"], path: "some-path"
+        };
+        let output = `
+            import x from "some-path";
+            
+            export default x;
         `;
 
         assert.isTrue(isEquil(input, output, [declaration]));

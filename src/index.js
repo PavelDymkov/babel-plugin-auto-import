@@ -32,16 +32,25 @@ export default function({types: t}) {
     function isCorrectIdentifier(path) {
         let {parentPath} = path;
 
-        if (parentPath.isDeclaration())
-            return false;
+        if (parentPath.isExpressionStatement())
+            return true;
 
-        if (parentPath.findParent(isImportDeclaration))
-            return false;
+        if (parentPath.isMemberExpression() && parentPath.get("object") == path)
+            return true;
 
-        if (parentPath.isMemberExpression() && parentPath.get("object") != path)
-            return false;
+        if (parentPath.isAssignmentExpression() && parentPath.get("right") == path)
+            return true;
 
-        return true;
+        if (parentPath.isVariableDeclarator() && parentPath.get("init") == path)
+            return true;
+
+        if (parentPath.isCallExpression())
+            return true;
+
+        if (parentPath.isExportDefaultDeclaration())
+            return true;
+
+        return false;
     }
 
     function isDefined(identifier, {bindings, parent}) {
