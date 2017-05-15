@@ -340,4 +340,35 @@ describe("Tests", () => {
 
         assert.isTrue(isEquil(input, output, [declaration]));
     });
+
+    it("case 17", () => {
+        let input = `
+            let a = x ? y : z;
+        `;
+        let declaration = {
+            members: ["x", "y", "z"], path: "some-path"
+        };
+        let output = `
+            import { x, y, z } from "some-path";
+
+            let a = x ? y : z;
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 18", () => {
+        let input = `
+            let a = b => x;
+            
+            let c = d(y);
+        `;
+        let declaration = {
+            members: ["x", "y", "z"], path: "some-path"
+        };
+        let output = `
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
 });

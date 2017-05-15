@@ -1,7 +1,6 @@
 const babel = require("babel-core");
 const declarations = [
-    { default: "x", path: "some-path" },
-    { members: ["y", "z"], path: "some-path" }
+    { members: ["x", "y", "z"], path: "some-path" }
 ];
 const babelOptions = {
     plugins: [["auto-import", {declarations}]],
@@ -11,7 +10,7 @@ const babelOptions = {
 
 let input;
 input = `
-    let a = b + x;
+    if (z) a
 `;
 
 

@@ -32,16 +32,40 @@ export default function({types: t}) {
     function isCorrectIdentifier(path) {
         let {parentPath} = path;
 
-        if (parentPath.isExpressionStatement())
+        if (parentPath.isArrayExpression())
+            return true;
+
+        if (parentPath.isArrowFunctionExpression())
+            return true;
+
+        if (parentPath.isAssignmentExpression() && parentPath.get("right") == path)
+            return true;
+
+        if (parentPath.isAwaitExpression())
             return true;
 
         if (parentPath.isBinaryExpression())
             return true;
 
-        if (parentPath.isMemberExpression() && parentPath.get("object") == path)
+        if (parentPath.bindExpression && parentPath.bindExpression())
             return true;
 
-        if (parentPath.isAssignmentExpression() && parentPath.get("right") == path)
+        if (parentPath.isCallExpression())
+            return true;
+
+        if (parentPath.isConditionalExpression())
+            return true;
+
+        if (parentPath.isDecorator())
+            return true;
+
+        if (parentPath.isDoWhileStatement())
+            return true;
+
+        if (parentPath.isExpressionStatement())
+            return true;
+
+        if (parentPath.isMemberExpression() && parentPath.get("object") == path)
             return true;
 
         if (parentPath.isVariableDeclarator() && parentPath.get("init") == path)
