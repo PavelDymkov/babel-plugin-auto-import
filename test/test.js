@@ -192,7 +192,7 @@ describe("Tests", () => {
             let c = d.b();
         `;
         let declaration = {
-            default: ["x"], path: "some-path"
+            default: "x", path: "some-path"
         };
         let output = `
             import x from "some-path";
@@ -278,12 +278,48 @@ describe("Tests", () => {
             export default x;
         `;
         let declaration = {
-            default: ["x"], path: "some-path"
+            default: "x", path: "some-path"
         };
         let output = `
             import x from "some-path";
             
             export default x;
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 14", () => {
+        let input = `
+            ({ x } = a);
+            
+            [y] = b;
+        `;
+        let declaration = {
+            members: ["x", "y", "z"], path: "some-path"
+        };
+        let output = input;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
+
+    it("case 15", () => {
+        let input = `
+            (function () {
+                let a = x;
+                let b = x;
+            } ());
+        `;
+        let declaration = {
+            default: "x", path: "some-path"
+        };
+        let output = `
+            import x from "some-path";
+
+            (function () {
+                let a = x;
+                let b = x;
+            })();
         `;
 
         assert.isTrue(isEquil(input, output, [declaration]));

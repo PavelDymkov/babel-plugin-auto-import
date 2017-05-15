@@ -11,7 +11,10 @@ const babelOptions = {
 
 let input;
 input = `
-    export default x;
+    (function () {
+        let a = x;
+        let b = x;
+    } ())
 `;
 
 

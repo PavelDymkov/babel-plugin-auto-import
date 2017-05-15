@@ -109,23 +109,30 @@ export default function({types: t}) {
         let currentImportDeclarations = programBody.reduce(toImportDeclarations, []);
 
         let importDidAppend =
+            currentImportDeclarations.some(importAlreadyExists, {identifier, moduleSource});
+
+        if (importDidAppend)
+            return;
+
+        importDidAppend =
             currentImportDeclarations.some(addToImportDeclaration, {identifier, type, moduleSource});
 
-        if (!importDidAppend) {
-            let specifier;
+        if (importDidAppend)
+            return;
 
-            if (type == ImportType.DEFAULT) {
-                specifier = t.importDefaultSpecifier(identifier);
-            }
-            else
-            if (type == ImportType.MEMBER) {
-                specifier = t.importSpecifier(identifier, identifier);
-            }
+        let specifier;
 
-            let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(moduleSource));
-
-            program.unshiftContainer("body", importDeclaration);
+        if (type == ImportType.DEFAULT) {
+            specifier = t.importDefaultSpecifier(identifier);
         }
+        else
+        if (type == ImportType.MEMBER) {
+            specifier = t.importSpecifier(identifier, identifier);
+        }
+
+        let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(moduleSource));
+
+        program.unshiftContainer("body", importDeclaration);
     }
 
     function isProgram(path) {
@@ -141,6 +148,20 @@ export default function({types: t}) {
             list.push(currentPath);
 
         return list;
+    }
+
+    function importAlreadyExists({node: importDeclaration}) {
+        let {identifier, moduleSource} = this;
+
+        if (importDeclaration.source.value == moduleSource) {
+            return importDeclaration.specifiers.some(checkSpecifierLocalName, identifier);
+        }
+    }
+
+    function checkSpecifierLocalName(specifier) {
+        let identifier = this;
+
+        return specifier.local.name == identifier.name;
     }
 
     function addToImportDeclaration(importDeclarationPath) {
