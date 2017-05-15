@@ -11,10 +11,7 @@ const babelOptions = {
 
 let input;
 input = `
-    (function () {
-        let a = x;
-        let b = x;
-    } ())
+    let a = b + x;
 `;
 
 

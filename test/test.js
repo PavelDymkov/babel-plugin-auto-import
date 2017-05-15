@@ -324,4 +324,20 @@ describe("Tests", () => {
 
         assert.isTrue(isEquil(input, output, [declaration]));
     });
+
+    it("case 16", () => {
+        let input = `
+            let a = b + x;
+        `;
+        let declaration = {
+            default: "x", path: "some-path"
+        };
+        let output = `
+            import x from "some-path";
+
+            let a = b + x;
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
 });
