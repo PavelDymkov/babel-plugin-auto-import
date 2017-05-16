@@ -34,82 +34,82 @@ export default function({types: t}) {
 
         if (parentPath.isArrayExpression())
             return true;
-
+        else
         if (parentPath.isArrowFunctionExpression())
             return true;
-
+        else
         if (parentPath.isAssignmentExpression() && parentPath.get("right") == path)
             return true;
-
+        else
         if (parentPath.isAwaitExpression())
             return true;
-
+        else
         if (parentPath.isBinaryExpression())
             return true;
-
+        else
         if (parentPath.bindExpression && parentPath.bindExpression())
             return true;
-
+        else
         if (parentPath.isCallExpression())
             return true;
-
+        else
         if (parentPath.isConditionalExpression())
             return true;
-
+        else
         if (parentPath.isDecorator())
             return true;
-
+        else
         if (parentPath.isDoWhileStatement())
             return true;
-
+        else
         if (parentPath.isExpressionStatement())
             return true;
-
+        else
         if (parentPath.isForInStatement())
             return true;
-
+        else
         if (parentPath.isForStatement())
             return true;
-
+        else
         if (parentPath.isIfStatement())
             return true;
-
+        else
         if (parentPath.isLogicalExpression())
             return true;
-
+        else
         if (parentPath.isMemberExpression() && parentPath.get("object") == path)
             return true;
-
+        else
         if (parentPath.isNewExpression())
             return true;
-
+        else
         if (parentPath.isObjectProperty() && parentPath.get("value") == path)
             return !parentPath.node.shorthand;
-
+        else
         if (parentPath.isReturnStatement())
             return true;
-
+        else
         if (parentPath.isSpreadElement())
             return true;
-
+        else
         if (parentPath.isSwitchStatement())
             return true;
-
+        else
         if (parentPath.isTaggedTemplateExpression())
             return true;
-
+        else
         if (parentPath.isThrowStatement())
             return true;
-
+        else
         if (parentPath.isUnaryExpression())
             return true;
-
+        else
         if (parentPath.isVariableDeclarator() && parentPath.get("init") == path)
             return true;
-
+        else
         if (parentPath.isCallExpression())
             return true;
-
+        else
         if (parentPath.isExportDefaultDeclaration())
             return true;
 
