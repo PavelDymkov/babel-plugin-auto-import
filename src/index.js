@@ -65,6 +65,9 @@ export default function({types: t}) {
         if (parentPath.isExpressionStatement())
             return true;
         else
+        if (parentPath.isExportDefaultDeclaration())
+            return true;
+        else
         if (parentPath.isForInStatement())
             return true;
         else
@@ -105,12 +108,6 @@ export default function({types: t}) {
             return true;
         else
         if (parentPath.isVariableDeclarator() && parentPath.get("init") == path)
-            return true;
-        else
-        if (parentPath.isCallExpression())
-            return true;
-        else
-        if (parentPath.isExportDefaultDeclaration())
             return true;
 
         return false;
