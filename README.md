@@ -4,7 +4,9 @@
 Convert global variables to import statements
 
 
-## Example
+## Examples
+
+### Example 1
 
 **.babelrc**
 
@@ -33,6 +35,8 @@ import React from "react";
 
 React.createElement("div", null, []);
 ```
+
+### Example 2
 
 **.babelrc**
 
