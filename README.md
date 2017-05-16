@@ -41,7 +41,7 @@ React.createElement("div", null, []);
   "plugins": [[
     "auto-import", {
       "declarations": [
-        { "default": "React", members: ["Component"], "path": "react" }
+        { "default": "React", "members": ["Component"], "path": "react" }
       ]
     }
   ]]
