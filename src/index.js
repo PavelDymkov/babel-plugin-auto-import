@@ -65,7 +65,43 @@ export default function({types: t}) {
         if (parentPath.isExpressionStatement())
             return true;
 
+        if (parentPath.isForInStatement())
+            return true;
+
+        if (parentPath.isForStatement())
+            return true;
+
+        if (parentPath.isIfStatement())
+            return true;
+
+        if (parentPath.isLogicalExpression())
+            return true;
+
         if (parentPath.isMemberExpression() && parentPath.get("object") == path)
+            return true;
+
+        if (parentPath.isNewExpression())
+            return true;
+
+        if (parentPath.isObjectProperty() && parentPath.get("value") == path)
+            return !parentPath.node.shorthand;
+
+        if (parentPath.isReturnStatement())
+            return true;
+
+        if (parentPath.isSpreadElement())
+            return true;
+
+        if (parentPath.isSwitchStatement())
+            return true;
+
+        if (parentPath.isTaggedTemplateExpression())
+            return true;
+
+        if (parentPath.isThrowStatement())
+            return true;
+
+        if (parentPath.isUnaryExpression())
             return true;
 
         if (parentPath.isVariableDeclarator() && parentPath.get("init") == path)

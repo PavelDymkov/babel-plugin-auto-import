@@ -10,7 +10,8 @@ const babelOptions = {
 
 let input;
 input = `
-    if (z) a
+    throw x;
+    +y;
 `;
 
 
