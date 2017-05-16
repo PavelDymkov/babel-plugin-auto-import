@@ -32,6 +32,9 @@ React.createElement("div", null, []);
 import React from "react";
 
 React.createElement("div", null, []);
+```
+
+**.babelrc**
 
 ```json
 {
