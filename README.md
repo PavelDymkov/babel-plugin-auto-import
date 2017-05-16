@@ -32,4 +32,29 @@ React.createElement("div", null, []);
 import React from "react";
 
 React.createElement("div", null, []);
+
+```json
+{
+  "plugins": [[
+    "auto-import", {
+      "declarations": [
+        { "default": "React", members: ["Component"], "path": "react" }
+      ]
+    }
+  ]]
+}
+```
+
+**In**
+
+```javascript
+class MyComponent extends Component { }
+```
+
+**Out**
+
+```javascript
+import { Component } from "react";
+
+class MyComponent extends Component { }
 ```
