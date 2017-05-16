@@ -1,5 +1,6 @@
 const babel = require("babel-core");
 const declarations = [
+    { default: "React", members: ["Component"], path: "react"},
     { members: ["x", "y", "z"], path: "some-path" }
 ];
 const babelOptions = {
@@ -10,8 +11,7 @@ const babelOptions = {
 
 let input;
 input = `
-    throw x;
-    +y;
+    class MyComponent extends Component { }
 `;
 
 

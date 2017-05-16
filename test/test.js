@@ -476,4 +476,24 @@ describe("Tests", () => {
 
         assert.isTrue(isEquil(input, output, [declaration]));
     });
+
+    it("case 23", () => {
+        let input = `
+            class A extends X { }
+            
+            let B = class B extends Y { };
+        `;
+        let declaration = {
+            members: ["X", "Y"], path: "some-path"
+        };
+        let output = `
+            import { X, Y } from "some-path";
+
+            class A extends X { }
+            
+            let B = class B extends Y { };
+        `;
+
+        assert.isTrue(isEquil(input, output, [declaration]));
+    });
 });

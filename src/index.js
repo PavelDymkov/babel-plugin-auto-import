@@ -53,6 +53,12 @@ export default function({types: t}) {
         if (parentPath.isCallExpression())
             return true;
         else
+        if (parentPath.isClassDeclaration() && parentPath.get("superClass") == path)
+            return true;
+        else
+        if (parentPath.isClassExpression() && parentPath.get("superClass") == path)
+            return true;
+        else
         if (parentPath.isConditionalExpression())
             return true;
         else
