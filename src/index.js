@@ -169,19 +169,19 @@ export default function({types: t}) {
         return members.some(has, identifier);
     }
 
-    function insertImport(program, identifier, type, moduleSource) {
+    function insertImport(program, identifier, type, pathToModule) {
         let programBody = program.get("body");
 
         let currentImportDeclarations = programBody.reduce(toImportDeclarations, []);
 
         let importDidAppend =
-            currentImportDeclarations.some(importAlreadyExists, {identifier, moduleSource});
+            currentImportDeclarations.some(importAlreadyExists, {identifier, pathToModule});
 
         if (importDidAppend)
             return;
 
         importDidAppend =
-            currentImportDeclarations.some(addToImportDeclaration, {identifier, type, moduleSource});
+            currentImportDeclarations.some(addToImportDeclaration, {identifier, type, pathToModule});
 
         if (importDidAppend)
             return;
@@ -196,7 +196,7 @@ export default function({types: t}) {
             specifier = t.importSpecifier(identifier, identifier);
         }
 
-        let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(moduleSource));
+        let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(pathToModule));
 
         program.unshiftContainer("body", importDeclaration);
     }
@@ -217,9 +217,9 @@ export default function({types: t}) {
     }
 
     function importAlreadyExists({node: importDeclaration}) {
-        let {identifier, moduleSource} = this;
+        let {identifier, pathToModule} = this;
 
-        if (importDeclaration.source.value == moduleSource) {
+        if (importDeclaration.source.value == pathToModule) {
             return importDeclaration.specifiers.some(checkSpecifierLocalName, identifier);
         }
     }
@@ -231,10 +231,10 @@ export default function({types: t}) {
     }
 
     function addToImportDeclaration(importDeclarationPath) {
-        let {identifier, type, moduleSource} = this;
+        let {identifier, type, pathToModule} = this;
         let {node} = importDeclarationPath;
 
-        if (node.source.value != moduleSource)
+        if (node.source.value != pathToModule)
             return false;
 
         let {specifiers} = node;
