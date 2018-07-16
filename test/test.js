@@ -3,11 +3,11 @@ const {assert} = require("chai");
 
 
 const babelOptions = {
-    plugins: [["babel-plugin-auto-import", { declarations: null }]]
+    plugins: [[require('../').default, { declarations: null }]]
 };
 const spaces = /\s+/g;
 
-function isEquil(input, expected, declarations) {
+function isEqual(input, expected, declarations) {
     babelOptions.plugins[0][1].declarations = declarations;
 
     let output = babel.transform(input, babelOptions).code;
@@ -30,7 +30,7 @@ describe("Tests", () => {
             someVariable;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 2", () => {
@@ -48,7 +48,7 @@ describe("Tests", () => {
             someVariable;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 3", () => {
@@ -64,7 +64,7 @@ describe("Tests", () => {
             someVariable;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 4", () => {
@@ -109,7 +109,7 @@ describe("Tests", () => {
 
         `;
 
-        assert.isTrue(isEquil(input, output, declarations));
+        assert.isTrue(isEqual(input, output, declarations));
     });
 
     it("case 5", () => {
@@ -123,7 +123,7 @@ describe("Tests", () => {
             let someVariable;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 6", () => {
@@ -167,7 +167,7 @@ describe("Tests", () => {
             })();
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 7", () => {
@@ -183,7 +183,7 @@ describe("Tests", () => {
             x.y.z;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 8", () => {
@@ -201,7 +201,7 @@ describe("Tests", () => {
             let c = d.b();
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 9", () => {
@@ -221,7 +221,7 @@ describe("Tests", () => {
         };
         let output = input;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 10", () => {
@@ -239,7 +239,7 @@ describe("Tests", () => {
         };
         let output = input;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 11", () => {
@@ -256,7 +256,7 @@ describe("Tests", () => {
         };
         let output = input;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 12", () => {
@@ -270,7 +270,7 @@ describe("Tests", () => {
         };
         let output = input;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 13", () => {
@@ -286,7 +286,7 @@ describe("Tests", () => {
             export default x;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 14", () => {
@@ -310,7 +310,7 @@ describe("Tests", () => {
             };
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 15", () => {
@@ -332,7 +332,7 @@ describe("Tests", () => {
             })();
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 16", () => {
@@ -348,7 +348,7 @@ describe("Tests", () => {
             let a = b + x;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 17", () => {
@@ -364,7 +364,7 @@ describe("Tests", () => {
             let a = x ? y : z;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 18", () => {
@@ -388,7 +388,7 @@ describe("Tests", () => {
             if (z) {}
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 19", () => {
@@ -408,7 +408,7 @@ describe("Tests", () => {
             for (let i = 0; y; z) {}
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 20", () => {
@@ -428,7 +428,7 @@ describe("Tests", () => {
             new z();
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 21", () => {
@@ -456,7 +456,7 @@ describe("Tests", () => {
             switch (z) {}
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 22", () => {
@@ -474,7 +474,7 @@ describe("Tests", () => {
             +y;
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
 
     it("case 23", () => {
@@ -494,6 +494,22 @@ describe("Tests", () => {
             let B = class B extends Y { };
         `;
 
-        assert.isTrue(isEquil(input, output, [declaration]));
+        assert.isTrue(isEqual(input, output, [declaration]));
     });
+
+  it("case 24", () => {
+    let input = `
+            someVariable;
+        `;
+    let declaration = {
+      anonymous: "someVariable", path: "some-path/some-module.js"
+    };
+    let output = `
+            import "some-path/some-module.js";
+
+            someVariable;
+        `;
+
+    assert.isTrue(isEqual(input, output, [declaration]));
+  });
 });
