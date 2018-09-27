@@ -65,3 +65,35 @@ import { Component } from "react";
 
 class MyComponent extends Component { }
 ```
+
+### Example 3
+
+Suitable for polyfilling browser built-ins (eg. `window.fetch`) 
+
+**.babelrc**
+
+```json
+{
+  "plugins": [[
+    "auto-import", {
+      "declarations": [
+        { "anonymous": "fetch", "path": "whatwg-fetch" }
+      ]
+    }
+  ]]
+}
+```
+
+**In**
+
+```javascript
+fetch('http://example.com/qwe')
+```
+
+**Out**
+
+```javascript
+import "whatwg-fetch";
+
+fetch('http://example.com/qwe')
+```

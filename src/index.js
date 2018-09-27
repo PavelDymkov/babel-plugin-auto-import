@@ -3,7 +3,8 @@ const isArray = require("is-array");
 
 const ImportType = {
     DEFAULT: 1,
-    MEMBER: 2
+    MEMBER: 2,
+    ANONYMOUS: 3
 };
 
 export default function({types: t}) {
@@ -149,6 +150,10 @@ export default function({types: t}) {
         if (hasMember(declaration, identifier)) {
             importType = ImportType.MEMBER;
         }
+        else
+        if (hasAnonymous(declaration, identifier)) {
+          importType = ImportType.ANONYMOUS;
+        }
 
         if (importType) {
             let program = path.findParent(isProgram);
@@ -167,6 +172,10 @@ export default function({types: t}) {
         let members = isArray(declaration.members) ? declaration.members : [];
 
         return members.some(has, identifier);
+    }
+
+    function hasAnonymous(declaration, identifier) {
+      return declaration["anonymous"] == identifier.name;
     }
 
     function insertImport(program, identifier, type, pathToModule) {
@@ -196,7 +205,9 @@ export default function({types: t}) {
             specifier = t.importSpecifier(identifier, identifier);
         }
 
-        let importDeclaration = t.importDeclaration([specifier], t.stringLiteral(pathToModule));
+        const specifiers = type != ImportType.ANONYMOUS ? [specifier] : [];
+
+        let importDeclaration = t.importDeclaration(specifiers, t.stringLiteral(pathToModule));
 
         program.unshiftContainer("body", importDeclaration);
     }
