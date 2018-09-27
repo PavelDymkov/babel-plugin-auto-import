@@ -77,7 +77,7 @@ Suitable for polyfilling browser built-ins (eg. `window.fetch`)
   "plugins": [[
     "auto-import", {
       "declarations": [
-        { "anonymous": "fetch", "path": "whatwg-fetch" }
+        { "anonymous": ["fetch"], "path": "whatwg-fetch" }
       ]
     }
   ]]
@@ -87,7 +87,7 @@ Suitable for polyfilling browser built-ins (eg. `window.fetch`)
 **In**
 
 ```javascript
-fetch('http://example.com/qwe')
+fetch("http://example.com/qwe");
 ```
 
 **Out**
@@ -95,5 +95,5 @@ fetch('http://example.com/qwe')
 ```javascript
 import "whatwg-fetch";
 
-fetch('http://example.com/qwe')
+fetch("http://example.com/qwe");
 ```

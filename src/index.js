@@ -1,6 +1,3 @@
-const isArray = require("is-array");
-
-
 const ImportType = {
     DEFAULT: 1,
     MEMBER: 2,
@@ -21,7 +18,7 @@ export default function({types: t}) {
 
                 let {declarations} = options;
 
-                if (!isArray(declarations))
+                if (!Array.isArray(declarations))
                     return;
 
                 declarations.some(handleDeclaration, { path, identifier });
@@ -169,13 +166,15 @@ export default function({types: t}) {
     }
 
     function hasMember(declaration, identifier) {
-        let members = isArray(declaration.members) ? declaration.members : [];
+        let members = Array.isArray(declaration.members) ? declaration.members : [];
 
         return members.some(has, identifier);
     }
 
     function hasAnonymous(declaration, identifier) {
-      return declaration["anonymous"] == identifier.name;
+        let anonymous = Array.isArray(declaration.anonymous) ? declaration.anonymous : [];
+
+        return anonymous.some(has, identifier);
     }
 
     function insertImport(program, identifier, type, pathToModule) {
@@ -184,7 +183,7 @@ export default function({types: t}) {
         let currentImportDeclarations = programBody.reduce(toImportDeclarations, []);
 
         let importDidAppend =
-            currentImportDeclarations.some(importAlreadyExists, {identifier, pathToModule});
+            currentImportDeclarations.some(importAlreadyExists, {identifier, type, pathToModule});
 
         if (importDidAppend)
             return;
@@ -195,17 +194,18 @@ export default function({types: t}) {
         if (importDidAppend)
             return;
 
-        let specifier;
+        let specifiers = [];
 
         if (type == ImportType.DEFAULT) {
-            specifier = t.importDefaultSpecifier(identifier);
+            specifiers.push(t.importDefaultSpecifier(identifier));
         }
         else
         if (type == ImportType.MEMBER) {
-            specifier = t.importSpecifier(identifier, identifier);
+            specifiers.push(t.importSpecifier(identifier, identifier));
         }
-
-        const specifiers = type != ImportType.ANONYMOUS ? [specifier] : [];
+        else
+        if (type == ImportType.ANONYMOUS) {
+        }
 
         let importDeclaration = t.importDeclaration(specifiers, t.stringLiteral(pathToModule));
 
@@ -216,10 +216,6 @@ export default function({types: t}) {
         return path.isProgram();
     }
 
-    function isImportDeclaration(path) {
-        return path.isImportDeclaration();
-    }
-
     function toImportDeclarations(list, currentPath) {
         if (currentPath.isImportDeclaration())
             list.push(currentPath);
@@ -228,9 +224,12 @@ export default function({types: t}) {
     }
 
     function importAlreadyExists({node: importDeclaration}) {
-        let {identifier, pathToModule} = this;
+        let {identifier, type, pathToModule} = this;
 
         if (importDeclaration.source.value == pathToModule) {
+            if (type == ImportType.ANONYMOUS)
+                return true;
+
             return importDeclaration.specifiers.some(checkSpecifierLocalName, identifier);
         }
     }

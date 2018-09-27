@@ -13,7 +13,7 @@ function isEqual(input, expected, declarations) {
     let output = babel.transform(input, babelOptions).code;
 
     return output.replace(spaces, "") == expected.replace(spaces, "");
-};
+}
 
 
 describe("Tests", () => {
@@ -497,19 +497,35 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-  it("case 24", () => {
-    let input = `
+    it("case 24", () => {
+        let input = `
             someVariable;
         `;
-    let declaration = {
-      anonymous: "someVariable", path: "some-path/some-module.js"
-    };
-    let output = `
+        let declaration = {
+            anonymous: ["someVariable"], path: "some-path/some-module.js"
+        };
+        let output = `
+            import "some-path/some-module.js";
+    
+            someVariable;
+        `;
+
+        assert.isTrue(isEqual(input, output, [declaration]));
+    });
+
+    it("case 25", () => {
+        let input = `
+            let x = a + b;
+        `;
+        let declaration = {
+            anonymous: ["a", "b"], path: "some-path/some-module.js"
+        };
+        let output = `
             import "some-path/some-module.js";
 
-            someVariable;
+            let x = a + b;
         `;
 
-    assert.isTrue(isEqual(input, output, [declaration]));
-  });
+        assert.isTrue(isEqual(input, output, [declaration]));
+    });
 });
