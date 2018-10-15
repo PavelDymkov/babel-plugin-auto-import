@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-auto-import",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "Auto imports",
   "main": "lib/index.js",
   "scripts": {
