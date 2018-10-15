@@ -1,13 +1,16 @@
+const { basename } = require("path");
+
+
 const ImportType = {
     DEFAULT: 1,
     MEMBER: 2,
-    ANONYMOUS: 3
+    ANONYMOUS: 3,
 };
 
 export default function({types: t}) {
     return {
         visitor: {
-            Identifier(path, {opts: options}) {
+            Identifier(path, {opts: options, file}) {
                 if (!isCorrectIdentifier(path))
                     return;
 
@@ -21,7 +24,9 @@ export default function({types: t}) {
                 if (!Array.isArray(declarations))
                     return;
 
-                declarations.some(handleDeclaration, { path, identifier });
+                let filename = basename(file.opts.filename);
+
+                declarations.some(handleDeclaration, { path, identifier, filename });
             }
         }
     };
@@ -133,7 +138,7 @@ export default function({types: t}) {
     }
 
     function handleDeclaration(declaration) {
-        let { path, identifier } = this;
+        let { path, identifier, filename } = this;
 
         if (!declaration)
             return;
@@ -154,8 +159,9 @@ export default function({types: t}) {
 
         if (importType) {
             let program = path.findParent(isProgram);
+            let pathToModule = getPathToModule(declaration, filename);
 
-            insertImport(program, identifier, importType, declaration.path);
+            insertImport(program, identifier, importType, pathToModule);
 
             return true;
         }
@@ -281,5 +287,19 @@ export default function({types: t}) {
         let {name} = this;
 
         return node.imported.name == name;
+    }
+
+    function getPathToModule(declaration, filename) {
+        if (declaration.path.includes("[name]")) {
+            let pattern = declaration.nameReplacePattern || "\.js$";
+            let newSubString = declaration.nameReplaceString || "";
+
+            debugger
+            let name = filename.replace(new RegExp(pattern), newSubString);
+
+            return declaration.path.replace("[name]", name);
+        }
+
+        return declaration.path;
     }
 }

@@ -7,10 +7,14 @@ const babelOptions = {
 };
 const spaces = /\s+/g;
 
-function isEqual(input, expected, declarations) {
+function isEqual(input, expected, declarations, filename) {
     babelOptions.plugins[0][1].declarations = declarations;
 
+    if (filename) babelOptions.filename = filename;
+
     let output = babel.transform(input, babelOptions).code;
+
+    if (filename) delete babelOptions.filename;
 
     return output.replace(spaces, "") == expected.replace(spaces, "");
 }
@@ -527,5 +531,40 @@ describe("Tests", () => {
         `;
 
         assert.isTrue(isEqual(input, output, [declaration]));
+    });
+
+    it ("case 26", () => {
+        let input = `
+            styles.className;
+        `;
+        let filename = "./componentName.js";
+        let declaration = {
+            default: "styles", path: "./[name].css"
+        };
+        let output = `
+            import styles from "./componentName.css";
+
+            styles.className;
+        `;
+
+        assert.isTrue(isEqual(input, output, [declaration], filename));
+    });
+
+    it ("case 27", () => {
+        let input = `
+            styles.className;
+        `;
+        let filename = "./name.component.js";
+        let declaration = {
+            default: "styles", path: "./[name].css",
+            nameReplacePattern: "\.component\.js$", nameReplaceString: ".styles"
+        };
+        let output = `
+            import styles from "./name.styles.css";
+
+            styles.className;
+        `;
+
+        assert.isTrue(isEqual(input, output, [declaration], filename));
     });
 });
