@@ -97,3 +97,89 @@ import "whatwg-fetch";
 
 fetch("http://example.com/qwe");
 ```
+
+### Example 4
+
+Generate import path by filename. [name] will be replaced to processed filename.
+
+**.babelrc**
+
+```json
+{
+  "plugins": [[
+    "auto-import", {
+      "declarations": [
+        { "default": "styles", "path": "./[name].css" }
+      ]
+    }
+  ]]
+}
+```
+
+**In**
+
+``` component-name.js ```
+
+```javascript
+// ...
+<input className={styles.className} />
+// ...
+```
+
+**Out**
+
+```javascript
+import styles from "./component-name.css";
+// ...
+<input className={styles.className} />
+// ...
+```
+
+You can process filename by "nameReplacePattern" and "nameReplaceString" options. It's processing like this:
+
+```javascript
+"basename.js".replace(new RegExp(nameReplacePattern), nameReplaceString); // == [name]
+```
+
+By default
+```javascript
+nameReplacePattern == "\.js$";
+nameReplaceString == "";
+```
+
+
+**.babelrc**
+
+```json
+{
+  "plugins": [[
+    "auto-import", {
+      "declarations": [
+        {
+          "default": "styles", "path": "./[name].css",
+          "nameReplacePattern": "\.component\.js$", "nameReplaceString": ".styles"
+        }
+      ]
+    }
+  ]]
+}
+```
+
+**In**
+
+``` name.component.js ```
+
+```javascript
+// ...
+<input className={styles.className} />
+// ...
+```
+
+**Out**
+
+```javascript
+import styles from "./name.styles.css";
+// ...
+<input className={styles.className} />
+// ...
+```

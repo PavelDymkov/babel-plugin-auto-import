@@ -7,22 +7,20 @@ const ImportType = {
     ANONYMOUS: 3,
 };
 
-export default function({types: t}) {
+
+export default function({ types: t }) {
     return {
         visitor: {
-            Identifier(path, {opts: options, file}) {
-                if (!isCorrectIdentifier(path))
-                    return;
+            Identifier(path, { opts: options, file }) {
+                if (!isCorrectIdentifier(path)) return;
 
-                let {node: identifier, scope} = path;
+                let { node: identifier, scope } = path;
 
-                if (isDefined(identifier, scope))
-                    return;
+                if (isDefined(identifier, scope)) return;
 
                 let {declarations} = options;
 
-                if (!Array.isArray(declarations))
-                    return;
+                if (!Array.isArray(declarations)) return;
 
                 let filename = basename(file.opts.filename);
 
@@ -33,106 +31,77 @@ export default function({types: t}) {
 
 
     function isCorrectIdentifier(path) {
-        let {parentPath} = path;
+        let { parentPath } = path;
 
-        if (parentPath.isArrayExpression())
-            return true;
+        if (parentPath.isArrayExpression()) return true;
         else
-        if (parentPath.isArrowFunctionExpression())
-            return true;
+        if (parentPath.isArrowFunctionExpression()) return true;
         else
-        if (parentPath.isAssignmentExpression() && parentPath.get("right") == path)
-            return true;
+        if (parentPath.isAssignmentExpression() && parentPath.get("right") == path) return true;
         else
-        if (parentPath.isAwaitExpression())
-            return true;
+        if (parentPath.isAwaitExpression()) return true;
         else
-        if (parentPath.isBinaryExpression())
-            return true;
+        if (parentPath.isBinaryExpression()) return true;
         else
-        if (parentPath.bindExpression && parentPath.bindExpression())
-            return true;
+        if (parentPath.bindExpression && parentPath.bindExpression()) return true;
         else
-        if (parentPath.isCallExpression())
-            return true;
+        if (parentPath.isCallExpression()) return true;
         else
-        if (parentPath.isClassDeclaration() && parentPath.get("superClass") == path)
-            return true;
+        if (parentPath.isClassDeclaration() && parentPath.get("superClass") == path) return true;
         else
-        if (parentPath.isClassExpression() && parentPath.get("superClass") == path)
-            return true;
+        if (parentPath.isClassExpression() && parentPath.get("superClass") == path) return true;
         else
-        if (parentPath.isConditionalExpression())
-            return true;
+        if (parentPath.isConditionalExpression()) return true;
         else
-        if (parentPath.isDecorator())
-            return true;
+        if (parentPath.isDecorator()) return true;
         else
-        if (parentPath.isDoWhileStatement())
-            return true;
+        if (parentPath.isDoWhileStatement()) return true;
         else
-        if (parentPath.isExpressionStatement())
-            return true;
+        if (parentPath.isExpressionStatement()) return true;
         else
-        if (parentPath.isExportDefaultDeclaration())
-            return true;
+        if (parentPath.isExportDefaultDeclaration()) return true;
         else
-        if (parentPath.isForInStatement())
-            return true;
+        if (parentPath.isForInStatement()) return true;
         else
-        if (parentPath.isForStatement())
-            return true;
+        if (parentPath.isForStatement()) return true;
         else
-        if (parentPath.isIfStatement())
-            return true;
+        if (parentPath.isIfStatement()) return true;
         else
-        if (parentPath.isLogicalExpression())
-            return true;
+        if (parentPath.isLogicalExpression()) return true;
         else
-        if (parentPath.isMemberExpression() && parentPath.get("object") == path)
-            return true;
+        if (parentPath.isMemberExpression() && parentPath.get("object") == path) return true;
         else
-        if (parentPath.isNewExpression())
-            return true;
+        if (parentPath.isNewExpression()) return true;
         else
-        if (parentPath.isObjectProperty() && parentPath.get("value") == path)
-            return !parentPath.node.shorthand;
+        if (parentPath.isObjectProperty() && parentPath.get("value") == path) return !parentPath.node.shorthand;
         else
-        if (parentPath.isReturnStatement())
-            return true;
+        if (parentPath.isReturnStatement()) return true;
         else
-        if (parentPath.isSpreadElement())
-            return true;
+        if (parentPath.isSpreadElement()) return true;
         else
-        if (parentPath.isSwitchStatement())
-            return true;
+        if (parentPath.isSwitchStatement()) return true;
         else
-        if (parentPath.isTaggedTemplateExpression())
-            return true;
+        if (parentPath.isTaggedTemplateExpression()) return true;
         else
-        if (parentPath.isThrowStatement())
-            return true;
+        if (parentPath.isThrowStatement()) return true;
         else
-        if (parentPath.isUnaryExpression())
-            return true;
+        if (parentPath.isUnaryExpression()) return true;
         else
-        if (parentPath.isVariableDeclarator() && parentPath.get("init") == path)
-            return true;
-
+        if (parentPath.isVariableDeclarator() && parentPath.get("init") == path) return true;
+        else
         return false;
     }
 
-    function isDefined(identifier, {bindings, parent}) {
+    function isDefined(identifier, { bindings, parent }) {
         let variables = Object.keys(bindings);
 
-        if (variables.some(has, identifier))
-            return true;
+        if (variables.some(has, identifier)) return true;
 
         return parent ? isDefined(identifier, parent) : false;
     }
 
     function has(identifier) {
-        let {name} = this;
+        let { name } = this;
 
         return identifier == name;
     }
@@ -140,8 +109,7 @@ export default function({types: t}) {
     function handleDeclaration(declaration) {
         let { path, identifier, filename } = this;
 
-        if (!declaration)
-            return;
+        if (!declaration) return;
 
         let importType = null;
 
@@ -188,17 +156,17 @@ export default function({types: t}) {
 
         let currentImportDeclarations = programBody.reduce(toImportDeclarations, []);
 
-        let importDidAppend =
+        let importDidAppend;
+
+        importDidAppend =
             currentImportDeclarations.some(importAlreadyExists, {identifier, type, pathToModule});
 
-        if (importDidAppend)
-            return;
+        if (importDidAppend) return;
 
         importDidAppend =
             currentImportDeclarations.some(addToImportDeclaration, {identifier, type, pathToModule});
 
-        if (importDidAppend)
-            return;
+        if (importDidAppend) return;
 
         let specifiers = [];
 
@@ -230,11 +198,10 @@ export default function({types: t}) {
     }
 
     function importAlreadyExists({node: importDeclaration}) {
-        let {identifier, type, pathToModule} = this;
+        let { identifier, type, pathToModule } = this;
 
         if (importDeclaration.source.value == pathToModule) {
-            if (type == ImportType.ANONYMOUS)
-                return true;
+            if (type == ImportType.ANONYMOUS) return true;
 
             return importDeclaration.specifiers.some(checkSpecifierLocalName, identifier);
         }
@@ -247,13 +214,12 @@ export default function({types: t}) {
     }
 
     function addToImportDeclaration(importDeclarationPath) {
-        let {identifier, type, pathToModule} = this;
-        let {node} = importDeclarationPath;
+        let { identifier, type, pathToModule } = this;
+        let { node } = importDeclarationPath;
 
-        if (node.source.value != pathToModule)
-            return false;
+        if (node.source.value != pathToModule) return false;
 
-        let {specifiers} = node;
+        let { specifiers } = node;
 
         if (type == ImportType.DEFAULT) {
             if (!specifiers.some(hasImportDefaultSpecifier)) {
@@ -281,10 +247,9 @@ export default function({types: t}) {
     }
 
     function hasSpecifierWithName(node) {
-        if (!t.isImportSpecifier(node))
-            return false;
+        if (!t.isImportSpecifier(node)) return false;
 
-        let {name} = this;
+        let { name } = this;
 
         return node.imported.name == name;
     }
@@ -294,7 +259,6 @@ export default function({types: t}) {
             let pattern = declaration.nameReplacePattern || "\.js$";
             let newSubString = declaration.nameReplaceString || "";
 
-            debugger
             let name = filename.replace(new RegExp(pattern), newSubString);
 
             return declaration.path.replace("[name]", name);
