@@ -1,4 +1,4 @@
-const babel = require("babel-core");
+const babel = require("@babel/core");
 const {assert} = require("chai");
 
 
@@ -10,11 +10,15 @@ const spaces = /\s+/g;
 function isEqual(input, expected, declarations, filename) {
     babelOptions.plugins[0][1].declarations = declarations;
 
-    if (filename) babelOptions.filename = filename;
+    let needDeleteFilename = false;
+    if (!babelOptions.filename) {
+        needDeleteFilename = true;
+        babelOptions.filename = filename || 'default.js';
+    }
 
     let output = babel.transform(input, babelOptions).code;
 
-    if (filename) delete babelOptions.filename;
+    if (needDeleteFilename) delete babelOptions.filename;
 
     return output.replace(spaces, "") == expected.replace(spaces, "");
 }
@@ -40,7 +44,7 @@ describe("Tests", () => {
     it("case 2", () => {
         let input = `
             import someVariable from "some-path/some-module.js";
-            
+
             someVariable;
         `;
         let declaration = {
@@ -76,10 +80,10 @@ describe("Tests", () => {
             import z from "some-path/y.js";
 
             let a;
-        
+
             (function () {
                 let b;
-                
+
                 (function () {
                     let c = a;
                     let d = x();
@@ -98,10 +102,10 @@ describe("Tests", () => {
             import z, { y } from "some-path/y.js";
 
             let a;
-            
+
             (function () {
                 let b;
-            
+
                 (function () {
                     let c = a;
                     let d = x();
@@ -200,7 +204,7 @@ describe("Tests", () => {
         };
         let output = `
             import x from "some-path";
-            
+
             let a = x.b();
             let c = d.b();
         `;
@@ -213,7 +217,7 @@ describe("Tests", () => {
             x:
             for (let i = 0; i < 10; i++) {
                 if (i) break x;
-            
+
                 y:
                 for (let i = 0; i < 10; i++) {
                     if (i) continue y;
@@ -234,7 +238,7 @@ describe("Tests", () => {
                 class x {
                     y() {}
                 }
-                
+
                 a = class z {};
             } catch (q) {}
         `;
@@ -249,7 +253,7 @@ describe("Tests", () => {
     it("case 11", () => {
         let input = `
             function x() { }
-            
+
             let a = function y() {};
             let b = {
                 c: function z() {}
@@ -266,7 +270,7 @@ describe("Tests", () => {
     it("case 12", () => {
         let input = `
             ({ x } = a);
-            
+
             [y] = b;
         `;
         let declaration = {
@@ -286,7 +290,7 @@ describe("Tests", () => {
         };
         let output = `
             import x from "some-path";
-            
+
             export default x;
         `;
 
@@ -374,9 +378,9 @@ describe("Tests", () => {
     it("case 18", () => {
         let input = `
             let a = b => x;
-            
+
             let c = d(y);
-            
+
             if (z) {}
         `;
         let declaration = {
@@ -386,9 +390,9 @@ describe("Tests", () => {
             import { x, y, z } from "some-path";
 
             let a = b => x;
-            
+
             let c = d(y);
-            
+
             if (z) {}
         `;
 
@@ -398,7 +402,7 @@ describe("Tests", () => {
     it("case 19", () => {
         let input = `
             for (let a in x) {}
-            
+
             for (let i = 0; y; z) {}
         `;
         let declaration = {
@@ -408,7 +412,7 @@ describe("Tests", () => {
             import { x, y, z } from "some-path";
 
             for (let a in x) {}
-            
+
             for (let i = 0; y; z) {}
         `;
 
@@ -440,9 +444,9 @@ describe("Tests", () => {
             function a() {
                 return x;
             }
-            
+
             y\`\`;
-            
+
             switch(z) {}
         `;
         let declaration = {
@@ -454,9 +458,9 @@ describe("Tests", () => {
             function a() {
                 return x;
             }
-            
+
             y\`\`;
-            
+
             switch (z) {}
         `;
 
@@ -484,7 +488,7 @@ describe("Tests", () => {
     it("case 23", () => {
         let input = `
             class A extends X { }
-            
+
             let B = class B extends Y { };
         `;
         let declaration = {
@@ -494,7 +498,7 @@ describe("Tests", () => {
             import { X, Y } from "some-path";
 
             class A extends X { }
-            
+
             let B = class B extends Y { };
         `;
 
@@ -510,7 +514,7 @@ describe("Tests", () => {
         };
         let output = `
             import "some-path/some-module.js";
-    
+
             someVariable;
         `;
 
