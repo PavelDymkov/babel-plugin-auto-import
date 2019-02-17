@@ -1,4 +1,5 @@
 const { basename } = require("path");
+const not = require("not-value");
 
 
 const ImportType = {
@@ -12,7 +13,7 @@ export default function({ types: t }) {
     return {
         visitor: {
             Identifier(path, { opts: options, file }) {
-                if (!isCorrectIdentifier(path)) return;
+                if (not(isCorrectIdentifier(path))) return;
 
                 let { node: identifier, scope } = path;
 
@@ -20,7 +21,7 @@ export default function({ types: t }) {
 
                 let {declarations} = options;
 
-                if (!Array.isArray(declarations)) return;
+                if (not(Array.isArray(declarations))) return;
 
                 let filename = basename(file.opts.filename);
 
@@ -73,7 +74,7 @@ export default function({ types: t }) {
         else
         if (parentPath.isNewExpression()) return true;
         else
-        if (parentPath.isObjectProperty() && parentPath.get("value") == path) return !parentPath.node.shorthand;
+        if (parentPath.isObjectProperty() && parentPath.get("value") == path) return not(parentPath.node.shorthand);
         else
         if (parentPath.isReturnStatement()) return true;
         else
@@ -109,7 +110,7 @@ export default function({ types: t }) {
     function handleDeclaration(declaration) {
         let { path, identifier, filename } = this;
 
-        if (!declaration) return;
+        if (not(declaration)) return;
 
         let importType = null;
 
@@ -222,7 +223,7 @@ export default function({ types: t }) {
         let { specifiers } = node;
 
         if (type == ImportType.DEFAULT) {
-            if (!specifiers.some(hasImportDefaultSpecifier)) {
+            if (not(specifiers.some(hasImportDefaultSpecifier))) {
                 let specifier = t.importDefaultSpecifier(identifier);
 
                 importDeclarationPath.unshiftContainer("specifiers", specifier);
@@ -232,7 +233,7 @@ export default function({ types: t }) {
         }
 
         if (type == ImportType.MEMBER) {
-            if (!specifiers.some(hasSpecifierWithName, identifier)) {
+            if (not(specifiers.some(hasSpecifierWithName, identifier))) {
                 let specifier = t.importSpecifier(identifier, identifier);
 
                 importDeclarationPath.pushContainer("specifiers", specifier);
@@ -247,7 +248,7 @@ export default function({ types: t }) {
     }
 
     function hasSpecifierWithName(node) {
-        if (!t.isImportSpecifier(node)) return false;
+        if (not(t.isImportSpecifier(node))) return false;
 
         let { name } = this;
 
