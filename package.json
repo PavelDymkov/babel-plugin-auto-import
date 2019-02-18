@@ -27,7 +27,6 @@
   "devDependencies": {
     "@babel/cli": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
-    "babel-plugin-test-helper": "^1.0.0",
     "chai": "^3.5.0",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.1"
