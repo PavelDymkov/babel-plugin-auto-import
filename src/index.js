@@ -1,5 +1,5 @@
 const { basename } = require("path");
-const not = require("not-value");
+const not = require("logical-not");
 
 
 const ImportType = {

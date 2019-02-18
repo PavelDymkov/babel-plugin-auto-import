@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-auto-import",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Auto imports",
   "main": "lib/index.js",
   "scripts": {
@@ -27,12 +27,13 @@
   "devDependencies": {
     "@babel/cli": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
+    "babel-plugin-test-helper": "^1.0.0",
     "chai": "^3.5.0",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.1"
   },
   "dependencies": {
     "@babel/core": "^7.2.2",
-    "not-value": "^1.0.0"
+    "logical-not": "^1.0.0"
   }
 }
