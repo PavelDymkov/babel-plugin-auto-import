@@ -1,4 +1,4 @@
-const { basename } = require("path");
+const { basename, relative } = require("path");
 const not = require("logical-not");
 
 
@@ -13,6 +13,7 @@ export default function({ types: t }) {
     return {
         visitor: {
             Identifier(path, { opts: options, file }) {
+                if (relative(file.opts.root, file.opts.filename).match(/^node_modules/)) return;
                 if (not(isCorrectIdentifier(path))) return;
 
                 let { node: identifier, scope } = path;

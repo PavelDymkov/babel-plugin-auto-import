@@ -571,4 +571,19 @@ describe("Tests", () => {
 
         assert.isTrue(isEqual(input, output, [declaration], filename));
     });
+
+    it("case 28 - ignore node_modules", () => {
+        let input = `
+            someVariable;
+        `;
+        let filename = 'node_modules/default.js';
+        let declaration = {
+            default: "someVariable", path: "some-path/some-module.js"
+        };
+        let output = `
+            someVariable;
+        `;
+
+        assert.isTrue(isEqual(input, output, [declaration], filename));
+    });
 });
