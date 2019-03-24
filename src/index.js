@@ -23,7 +23,7 @@ export default function({ types: t }) {
 
                 if (not(Array.isArray(declarations))) return;
 
-                let filename = basename(file.opts.filename);
+                let filename = file.opts.filename ? basename(file.opts.filename) : "";
 
                 declarations.some(handleDeclaration, { path, identifier, filename });
             }

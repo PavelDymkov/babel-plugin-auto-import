@@ -3,6 +3,8 @@
 
 Convert global variables to import statements
 
+- [Using with Create React App](#using-with-create-react-app)
+
 
 ## Examples
 
@@ -182,4 +184,29 @@ import styles from "./name.styles.css";
 // ...
 <input className={styles.className} />
 // ...
+```
+
+## Using with Create React App
+
+If you don't want to eject your project, you can use [react-app-rewired](https://github.com/timarney/react-app-rewired) and
+[customize-cra](https://github.com/arackaf/customize-cra).
+
+[Follow the instructions](https://github.com/timarney/react-app-rewired#how-to-rewire-your-create-react-app-project).
+
+**config-overrides.js**
+
+```javascript
+const { override, addBabelPlugins, disableEsLint } = require("customize-cra");
+
+const autoImportPluginOptions = {
+    "declarations": [
+        { "default": "React", members: ["Component"], "path": "react" }
+    ]
+};
+
+
+module.exports = override(
+    ...addBabelPlugins([require("babel-plugin-auto-import"), autoImportPluginOptions]),
+    disableEsLint(),
+);
 ```
