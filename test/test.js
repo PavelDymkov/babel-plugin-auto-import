@@ -1,9 +1,8 @@
 const babel = require("@babel/core");
-const {assert} = require("chai");
-
+const { assert } = require("chai");
 
 const babelOptions = {
-    plugins: [[require('../').default, { declarations: null }]]
+    plugins: [[require("../").default, { declarations: null }]],
 };
 const spaces = /\s+/g;
 
@@ -11,9 +10,10 @@ function isEqual(input, expected, declarations, filename) {
     babelOptions.plugins[0][1].declarations = declarations;
 
     let needDeleteFilename = false;
+
     if (!babelOptions.filename) {
         needDeleteFilename = true;
-        babelOptions.filename = filename || 'default.js';
+        babelOptions.filename = filename || "default.js";
     }
 
     let output = babel.transform(input, babelOptions).code;
@@ -23,14 +23,14 @@ function isEqual(input, expected, declarations, filename) {
     return output.replace(spaces, "") == expected.replace(spaces, "");
 }
 
-
 describe("Tests", () => {
     it("case 1", () => {
         let input = `
             someVariable;
         `;
         let declaration = {
-            default: "someVariable", path: "some-path/some-module.js"
+            default: "someVariable",
+            path: "some-path/some-module.js",
         };
         let output = `
             import someVariable from "some-path/some-module.js";
@@ -48,7 +48,8 @@ describe("Tests", () => {
             someVariable;
         `;
         let declaration = {
-            default: "someVariable", path: "some-path/some-module.js"
+            default: "someVariable",
+            path: "some-path/some-module.js",
         };
         let output = `
             import someVariable from "some-path/some-module.js";
@@ -64,7 +65,8 @@ describe("Tests", () => {
             someVariable;
         `;
         let declaration = {
-            members: ["someVariable"], path: "some-path/some-module.js"
+            members: ["someVariable"],
+            path: "some-path/some-module.js",
         };
         let output = `
             import { someVariable } from "some-path/some-module.js";
@@ -95,7 +97,7 @@ describe("Tests", () => {
         `;
         let declarations = [
             { default: "x", path: "some-path/x.js" },
-            { members: ["y"], path: "some-path/y.js" }
+            { members: ["y"], path: "some-path/y.js" },
         ];
         let output = `
             import x from "some-path/x.js";
@@ -125,7 +127,8 @@ describe("Tests", () => {
             let someVariable;
         `;
         let declaration = {
-            default: "someVariable", path: "some-path/some-module.js"
+            default: "someVariable",
+            path: "some-path/some-module.js",
         };
         let output = `
             let someVariable;
@@ -155,7 +158,7 @@ describe("Tests", () => {
         let declaration = {
             path: "some-path",
             default: "x",
-            members: ["y", "z"]
+            members: ["y", "z"],
         };
         let output = `
             import x, { q, y, z } from "some-path";
@@ -183,7 +186,8 @@ describe("Tests", () => {
             x.y.z;
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
             import { x } from "some-path";
@@ -200,7 +204,8 @@ describe("Tests", () => {
             let c = d.b();
         `;
         let declaration = {
-            default: "x", path: "some-path"
+            default: "x",
+            path: "some-path",
         };
         let output = `
             import x from "some-path";
@@ -225,7 +230,8 @@ describe("Tests", () => {
             }
         `;
         let declaration = {
-            members: ["x", "y"], path: "some-path"
+            members: ["x", "y"],
+            path: "some-path",
         };
         let output = input;
 
@@ -243,7 +249,8 @@ describe("Tests", () => {
             } catch (q) {}
         `;
         let declaration = {
-            members: ["x", "y", "z", "q"], path: "some-path"
+            members: ["x", "y", "z", "q"],
+            path: "some-path",
         };
         let output = input;
 
@@ -260,7 +267,8 @@ describe("Tests", () => {
             };
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = input;
 
@@ -274,7 +282,8 @@ describe("Tests", () => {
             [y] = b;
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = input;
 
@@ -286,7 +295,8 @@ describe("Tests", () => {
             export default x;
         `;
         let declaration = {
-            default: "x", path: "some-path"
+            default: "x",
+            path: "some-path",
         };
         let output = `
             import x from "some-path";
@@ -306,10 +316,11 @@ describe("Tests", () => {
             };
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
-            import { x } from "some-path";
+            import { x, y } from "some-path";
 
             let a = {
                 b: x,
@@ -329,7 +340,8 @@ describe("Tests", () => {
             } ());
         `;
         let declaration = {
-            default: "x", path: "some-path"
+            default: "x",
+            path: "some-path",
         };
         let output = `
             import x from "some-path";
@@ -348,7 +360,8 @@ describe("Tests", () => {
             let a = b + x;
         `;
         let declaration = {
-            default: "x", path: "some-path"
+            default: "x",
+            path: "some-path",
         };
         let output = `
             import x from "some-path";
@@ -364,7 +377,8 @@ describe("Tests", () => {
             let a = x ? y : z;
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
             import { x, y, z } from "some-path";
@@ -384,7 +398,8 @@ describe("Tests", () => {
             if (z) {}
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
             import { x, y, z } from "some-path";
@@ -406,7 +421,8 @@ describe("Tests", () => {
             for (let i = 0; y; z) {}
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
             import { x, y, z } from "some-path";
@@ -426,7 +442,8 @@ describe("Tests", () => {
             new z();
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
             import { x, z } from "some-path";
@@ -450,7 +467,8 @@ describe("Tests", () => {
             switch(z) {}
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
             import { x, y, z } from "some-path";
@@ -473,7 +491,8 @@ describe("Tests", () => {
             +y;
         `;
         let declaration = {
-            members: ["x", "y", "z"], path: "some-path"
+            members: ["x", "y", "z"],
+            path: "some-path",
         };
         let output = `
             import { x, y } from "some-path";
@@ -492,7 +511,8 @@ describe("Tests", () => {
             let B = class B extends Y { };
         `;
         let declaration = {
-            members: ["X", "Y"], path: "some-path"
+            members: ["X", "Y"],
+            path: "some-path",
         };
         let output = `
             import { X, Y } from "some-path";
@@ -510,7 +530,8 @@ describe("Tests", () => {
             someVariable;
         `;
         let declaration = {
-            anonymous: ["someVariable"], path: "some-path/some-module.js"
+            anonymous: ["someVariable"],
+            path: "some-path/some-module.js",
         };
         let output = `
             import "some-path/some-module.js";
@@ -526,7 +547,8 @@ describe("Tests", () => {
             let x = a + b;
         `;
         let declaration = {
-            anonymous: ["a", "b"], path: "some-path/some-module.js"
+            anonymous: ["a", "b"],
+            path: "some-path/some-module.js",
         };
         let output = `
             import "some-path/some-module.js";
@@ -537,13 +559,14 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it ("case 26", () => {
+    it("case 26", () => {
         let input = `
             styles.className;
         `;
         let filename = "./componentName.js";
         let declaration = {
-            default: "styles", path: "./[name].css"
+            default: "styles",
+            path: "./[name].css",
         };
         let output = `
             import styles from "./componentName.css";
@@ -554,14 +577,16 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration], filename));
     });
 
-    it ("case 27", () => {
+    it("case 27", () => {
         let input = `
             styles.className;
         `;
         let filename = "./name.component.js";
         let declaration = {
-            default: "styles", path: "./[name].css",
-            nameReplacePattern: "\.component\.js$", nameReplaceString: ".styles"
+            default: "styles",
+            path: "./[name].css",
+            nameReplacePattern: ".component.js$",
+            nameReplaceString: ".styles",
         };
         let output = `
             import styles from "./name.styles.css";

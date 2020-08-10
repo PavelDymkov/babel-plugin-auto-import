@@ -145,7 +145,7 @@ You can process filename by "nameReplacePattern" and "nameReplaceString" options
 
 By default
 ```javascript
-nameReplacePattern == "\.js$";
+nameReplacePattern == "\\.js$";
 nameReplaceString == "";
 ```
 

@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-auto-import",
-  "version": "1.0.5",
-  "description": "Auto imports",
+  "version": "1.1.0",
+  "description": "Babel plugin for variable auto imports",
   "main": "lib/index.js",
   "scripts": {
     "build": "rimraf lib && babel src --out-dir lib",
@@ -25,14 +25,15 @@
   },
   "homepage": "https://github.com/PavelDymkov/babel-plugin-auto-import#readme",
   "devDependencies": {
-    "@babel/cli": "^7.2.0",
-    "@babel/preset-env": "^7.2.0",
-    "chai": "^3.5.0",
-    "mocha": "^5.2.0",
-    "rimraf": "^2.6.1"
+    "@babel/cli": "^7.10.5",
+    "@babel/preset-env": "^7.11.0",
+    "babel-plugin-transform-enum-literal": "^1.0.5",
+    "chai": "^4.2.0",
+    "mocha": "^8.1.1",
+    "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "@babel/core": "^7.2.2",
-    "logical-not": "^1.0.0"
+    "@babel/core": "^7.11.1",
+    "logical-not": "^1.0.1"
   }
 }
