@@ -1,39 +1,38 @@
 {
-  "name": "babel-plugin-auto-import",
-  "version": "1.1.0",
-  "description": "Babel plugin for variable auto imports",
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "rimraf lib && babel src --out-dir lib",
-    "dev": "rimraf lib && babel src --out-dir lib --source-maps --watch",
-    "prepublish": "npm run build",
-    "test": "npm run build && mocha"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/PavelDymkov/babel-plugin-auto-import.git"
-  },
-  "keywords": [
-    "babel-plugin",
-    "import",
-    "module"
-  ],
-  "author": "Pavel Dymkov <dymkov86@gmail.com>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/PavelDymkov/babel-plugin-auto-import/issues"
-  },
-  "homepage": "https://github.com/PavelDymkov/babel-plugin-auto-import#readme",
-  "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/preset-env": "^7.11.0",
-    "babel-plugin-transform-enum-literal": "^1.0.5",
-    "chai": "^4.2.0",
-    "mocha": "^8.1.1",
-    "rimraf": "^3.0.2"
-  },
-  "dependencies": {
-    "@babel/core": "^7.11.1",
-    "logical-not": "^1.0.1"
-  }
+    "name" : "babel-plugin-auto-import" ,
+    "version" : "1.1.0" ,
+    "description" : "Babel plugin for variable auto imports" ,
+    "main" : "lib/index.js" ,
+    "scripts" : {
+        "build" : "rimraf lib && babel src --out-dir lib" ,
+        "dev" : "rimraf lib && babel src --out-dir lib --source-maps --watch" ,
+        "prepublish" : "npm run build" ,
+        "test" : "npm run build && mocha"
+    } ,
+    "repository" : {
+        "type" : "git" ,
+        "url" : "git+https://github.com/PavelDymkov/babel-plugin-auto-import.git"
+    } ,
+    "keywords" : [
+        "babel-plugin" ,
+        "import" ,
+        "module"
+    ] ,
+    "author" : "Pavel Dymkov <dymkov86@gmail.com>" ,
+    "license" : "ISC" ,
+    "bugs" : {
+        "url" : "https://github.com/PavelDymkov/babel-plugin-auto-import/issues"
+    } ,
+    "homepage" : "https://github.com/PavelDymkov/babel-plugin-auto-import#readme" ,
+    "devDependencies" : {
+        "@babel/cli" : "^7.10.5" ,
+        "@babel/preset-env" : "^7.11.0" ,
+        "chai" : "^4.2.0" ,
+        "mocha" : "^8.1.1" ,
+        "rimraf" : "^3.0.2"
+    } ,
+    "dependencies" : {
+        "@babel/core" : "^7.11.1" ,
+        "logical-not" : "^1.0.1"
+    }
 }
