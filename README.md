@@ -102,6 +102,38 @@ fetch("http://example.com/qwe");
 
 ### Example 4
 
+import * as namespace from a esModule
+
+**.babelrc**
+
+```json
+{
+  "plugins": [[
+    "auto-import", {
+      "declarations": [
+        { "namespace": "toolkitNamespace", "path": "@toolkit/core" }
+      ]
+    }
+  ]]
+}
+```
+
+**In**
+
+```javascript
+toolkit.debounce();
+```
+
+**Out**
+
+```javascript
+import * as toolkitNamespace from "@toolkit/core";
+
+toolkit.debounce();
+```
+
+### Example 5
+
 Generate import path by filename. [name] will be replaced to processed filename.
 
 **.babelrc**
