@@ -2,9 +2,9 @@ const babel = require("@babel/core");
 const { assert } = require("chai");
 
 const babelOptions = {
-    plugins: [[require("../").default, { declarations: null }]],
+    plugins: [[require("../"), { declarations: null }]],
 };
-const spaces = /\s+/g;
+const spaces = /(\s|\t|\r|\n)+/g;
 
 function isEqual(input, expected, declarations, filename) {
     babelOptions.plugins[0][1].declarations = declarations;
@@ -19,12 +19,12 @@ function isEqual(input, expected, declarations, filename) {
     let output = babel.transform(input, babelOptions).code;
 
     if (needDeleteFilename) delete babelOptions.filename;
-
-    return output.replace(spaces, "") == expected.replace(spaces, "");
+    /*the outputed code will be printed when went wrong*/
+    return (output.replace(spaces, "") == expected.replace(spaces, "")) || (console.log(output),false);
 }
 
 describe("Tests", () => {
-    it("case 1", () => {
+    it(`case f3004854`, () => {
         let input = `
             someVariable;
         `;
@@ -41,7 +41,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 2", () => {
+    it(`case 72abd8ee`, () => {
         let input = `
             import someVariable from "some-path/some-module.js";
 
@@ -60,7 +60,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 3", () => {
+    it(`case eb873e18`, () => {
         let input = `
             someVariable;
         `;
@@ -77,7 +77,33 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 4", () => {
+    it(`case 8ac619cd`, () => {
+        let input = `
+            toolkitNamespace.debounce;
+            toolkit.debounce;
+            debounce;
+            toolkit();
+        `;
+        let declaration = {
+            members: ["debounce"],
+            namespace : "toolkitNamespace",
+	         default : "toolkit",
+            path: "@toolkit/core",
+        };
+        let output = `
+            import toolkit, { debounce } from "@toolkit/core";
+            import * as toolkitNamespace from "@toolkit/core";
+            
+            toolkitNamespace.debounce;
+            toolkit.debounce;
+            debounce;
+            toolkit();
+        `;
+
+        assert.isTrue(isEqual(input, output, [declaration]));
+    });
+
+    it(`case 50c90cc6`, () => {
         let input = `
             import z from "some-path/y.js";
 
@@ -122,7 +148,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, declarations));
     });
 
-    it("case 5", () => {
+    it(`case 899bff85`, () => {
         let input = `
             let someVariable;
         `;
@@ -137,7 +163,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 6", () => {
+    it(`case 5fbad1c9`, () => {
         let input = `
             import { q } from "some-path";
 
@@ -181,7 +207,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 7", () => {
+    it(`case 647cf2b1`, () => {
         let input = `
             x.y.z;
         `;
@@ -198,7 +224,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 8", () => {
+    it(`case b26b1bcc`, () => {
         let input = `
             let a = x.b();
             let c = d.b();
@@ -217,7 +243,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 9", () => {
+    it(`case 31666940`, () => {
         let input = `
             x:
             for (let i = 0; i < 10; i++) {
@@ -238,7 +264,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 10", () => {
+    it(`case b6cee56d`, () => {
         let input = `
             try {
                 class x {
@@ -257,7 +283,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 11", () => {
+    it(`case 122196f2`, () => {
         let input = `
             function x() { }
 
@@ -275,7 +301,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 12", () => {
+    it(`case 8396261c`, () => {
         let input = `
             ({ x } = a);
 
@@ -290,7 +316,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 13", () => {
+    it(`case 6e20dac7`, () => {
         let input = `
             export default x;
         `;
@@ -307,7 +333,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 14", () => {
+    it(`case 2079f24e`, () => {
         let input = `
             let a = {
                 b: x,
@@ -332,7 +358,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 15", () => {
+    it(`case 0bc2d1bd`, () => {
         let input = `
             (function () {
                 let a = x;
@@ -355,7 +381,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 16", () => {
+    it(`case bfd8b1ed`, () => {
         let input = `
             let a = b + x;
         `;
@@ -372,7 +398,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 17", () => {
+    it(`case e584d067`, () => {
         let input = `
             let a = x ? y : z;
         `;
@@ -389,7 +415,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 18", () => {
+    it(`case 379f0b96`, () => {
         let input = `
             let a = b => x;
 
@@ -414,7 +440,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 19", () => {
+    it(`case 6cf0cf3d`, () => {
         let input = `
             for (let a in x) {}
 
@@ -435,7 +461,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 20", () => {
+    it(`case 9aa5a8d0`, () => {
         let input = `
             new x;
             new a.y();
@@ -456,7 +482,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 21", () => {
+    it(`case 4f1e9272`, () => {
         let input = `
             function a() {
                 return x;
@@ -485,7 +511,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 22", () => {
+    it(`case 97d9847b`, () => {
         let input = `
             throw x;
             +y;
@@ -504,7 +530,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 23", () => {
+    it(`case b24f8825`, () => {
         let input = `
             class A extends X { }
 
@@ -525,7 +551,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 24", () => {
+    it(`case f6838ccb`, () => {
         let input = `
             someVariable;
         `;
@@ -542,7 +568,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 25", () => {
+    it(`case 796ad655`, () => {
         let input = `
             let x = a + b;
         `;
@@ -559,7 +585,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration]));
     });
 
-    it("case 26", () => {
+    it(`case ce351f9a`, () => {
         let input = `
             styles.className;
         `;
@@ -577,7 +603,7 @@ describe("Tests", () => {
         assert.isTrue(isEqual(input, output, [declaration], filename));
     });
 
-    it("case 27", () => {
+    it(`case 9a2dfe69`, () => {
         let input = `
             styles.className;
         `;

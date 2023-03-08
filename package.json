@@ -27,7 +27,6 @@
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/preset-env": "^7.11.0",
-    "babel-plugin-transform-enum-literal": "^1.0.5",
     "chai": "^4.2.0",
     "mocha": "^8.1.1",
     "rimraf": "^3.0.2"
